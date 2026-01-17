@@ -1,0 +1,53 @@
+.titlebar {
+    --wails-draggable: drag;
+    height: 38px;
+    width: 100%;
+    background-color: #1b2636;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    user-select: none;
+    font-family: "Segoe UI", sans-serif;
+    font-size: 12px;
+    /* Ensure it stays on top */
+    position: relative;
+    z-index: 50;
+}
+
+.titlebar-title {
+    padding-left: 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    /* Vertical center text */
+}
+
+.titlebar-controls {
+    --wails-draggable: no-drag;
+    display: flex;
+    height: 100%;
+}
+
+.titlebar-button {
+    width: 46px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.1s;
+    /* Reset any external button styles */
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+.titlebar-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.titlebar-button.close:hover {
+    background-color: #e81123;
+}

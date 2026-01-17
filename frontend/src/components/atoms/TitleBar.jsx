@@ -1,12 +1,29 @@
 import { WindowMinimise, WindowToggleMaximise, Quit } from '../../../wailsjs/runtime/runtime';
+import { useMiniMode } from '../../context/MiniModeContext';
 import './TitleBar.css';
 
 export function TitleBar() {
+    // Try to access context, might be null if used outside provider (e.g. login screen if exists)
+    let miniMode = null;
+    try {
+        miniMode = useMiniMode();
+    } catch (e) {
+        // Ignore if context not available
+    }
+
+    const handleMinimize = () => {
+        if (miniMode && miniMode.enterMiniMode) {
+            miniMode.enterMiniMode();
+        } else {
+            WindowMinimise();
+        }
+    };
+
     return (
         <div className="titlebar">
             <div className="titlebar-title">Crextio</div>
             <div className="titlebar-controls">
-                <div className="titlebar-button" onClick={WindowMinimise} title="Minimize">
+                <div className="titlebar-button" onClick={handleMinimize} title="Mini Mode">
                     <svg width="10" height="10" viewBox="0 0 10.2 1" fill="currentColor">
                         <rect width="10.2" height="1"></rect>
                     </svg>

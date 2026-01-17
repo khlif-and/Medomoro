@@ -1,7 +1,7 @@
 import React from 'react';
 import { Check, BookOpen, Flame } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { useWorshipTracker } from '../../logic/useWorshipTracker';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell } from 'recharts';
+import { useMuslimLogic } from '../../logic/useMuslimLogic';
 
 const PrayerItem = ({ name, isDone, type = "fardhu", onToggle }) => {
     return (
@@ -32,7 +32,44 @@ const PrayerItem = ({ name, isDone, type = "fardhu", onToggle }) => {
 };
 
 export const WorshipTracker = () => {
-    const { activeTab, setActiveTab, prayers, togglePrayer, weeklyStats } = useWorshipTracker();
+    // Migrate to useMuslimLogic directly
+    const { data, updatePrayer, weeklyData } = useMuslimLogic();
+    const [activeTab, setActiveTab] = React.useState('daily');
+
+    // Mappers for UI
+    const prayersFardhu = [
+        { id: 'subuh', name: 'Subuh', isDone: data.subuh === 3 },
+        { id: 'dzuhur', name: 'Dzuhur', isDone: data.dzuhur === 3 },
+        { id: 'ashar', name: 'Ashar', isDone: data.ashar === 3 },
+        { id: 'maghrib', name: 'Maghrib', isDone: data.maghrib === 3 },
+        { id: 'isya', name: 'Isya', isDone: data.isya === 3 },
+    ];
+
+    const prayersSunnah = [
+        { id: 'dhuha', name: 'Dhuha', isDone: data.dhuha },
+        { id: 'tahajud', name: 'Tahajjud', isDone: data.tahajud },
+    ];
+
+    const handleToggle = (type, id) => {
+        if (type === 'fardhu') {
+            // Logic: if 3 (done/ontime), set to 0? Or toggle between 0 and 3?
+            // Assuming simple toggle for dashboard: 3 -> 0, 0 -> 3
+            updatePrayer(id, data[id] === 3 ? 0 : 3);
+        } else {
+            // Sunnah is bool
+            updatePrayer(id, !data[id]);
+        }
+    };
+
+    // Chart Data Mapper
+    const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    const chartData = weeklyData.map(d => {
+        const date = new Date(d.date);
+        return {
+            name: days[date.getDay()],
+            score: d.totalPoints || 0
+        };
+    });
 
     return (
         <div className="bg-white rounded-[24px] p-6 shadow-sm border border-gray-100 w-full">
@@ -66,24 +103,24 @@ export const WorshipTracker = () => {
                 <div className="grid grid-cols-2 gap-6">
                     <div>
                         <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Fardhu Prayers</h4>
-                        {prayers.fardhu.map(p => (
+                        {prayersFardhu.map(p => (
                             <PrayerItem
                                 key={p.id}
                                 name={p.name}
                                 isDone={p.isDone}
-                                onToggle={() => togglePrayer('fardhu', p.id)}
+                                onToggle={() => handleToggle('fardhu', p.id)}
                             />
                         ))}
                     </div>
                     <div>
                         <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Sunnah & Ibadah</h4>
-                        {prayers.sunnah.map(p => (
+                        {prayersSunnah.map(p => (
                             <PrayerItem
                                 key={p.id}
                                 name={p.name}
                                 isDone={p.isDone}
                                 type="sunnah"
-                                onToggle={() => togglePrayer('sunnah', p.id)}
+                                onToggle={() => handleToggle('sunnah', p.id)}
                             />
                         ))}
                         <div className="bg-gradient-to-br from-[#1b2636] to-[#2c3e50] rounded-xl p-4 text-white mt-1 relative overflow-hidden group cursor-pointer">
@@ -92,12 +129,13 @@ export const WorshipTracker = () => {
                                     <div className="bg-white/20 p-1.5 rounded-lg">
                                         <BookOpen size={16} className="text-white" />
                                     </div>
-                                    <span className="text-xs font-medium bg-white/10 px-2 py-1 rounded">Juz 1</span>
+                                    <span className="text-xs font-medium bg-white/10 px-2 py-1 rounded">Juz {data.quran.juz || 1}</span>
                                 </div>
                                 <h4 className="font-bold mb-1">Read Al-Quran</h4>
-                                <p className="text-xs text-gray-300 mb-3">Continue Surah Al-Baqarah</p>
+                                <p className="text-xs text-gray-300 mb-3">{data.quran.surahName || "Continue Reading"}</p>
                                 <div className="w-full bg-white/20 h-1.5 rounded-full overflow-hidden">
-                                    <div className="bg-emerald-400 h-full w-[45%]"></div>
+                                    {/* Simple visual progress based on Ayat? Assuming max 100 for visual */}
+                                    <div className="bg-emerald-400 h-full" style={{ width: `${Math.min(data.quran.ayat || 0, 100)}%` }}></div>
                                 </div>
                             </div>
                             <div className="absolute -right-2 -bottom-4 opacity-10 transform rotate-12 group-hover:scale-110 transition-transform">
@@ -111,7 +149,7 @@ export const WorshipTracker = () => {
             {activeTab === 'stats' && (
                 <div className="h-[280px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={weeklyStats} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                        <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                             <XAxis
                                 dataKey="name"
@@ -128,13 +166,20 @@ export const WorshipTracker = () => {
                             <Tooltip
                                 cursor={{ fill: '#f9fafb' }}
                                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}
+                                formatter={(value) => [`${value} Pts`, 'Score']}
                             />
                             <Bar
                                 dataKey="score"
-                                fill="#1b2636"
                                 radius={[6, 6, 6, 6]}
                                 barSize={40}
-                            />
+                            >
+                                {chartData.map((entry, index) => (
+                                    <Cell
+                                        key={`cell-${index}`}
+                                        fill={entry.score < 0 ? '#ef4444' : '#1b2636'} // Red-500 if negative, else Dark
+                                    />
+                                ))}
+                            </Bar>
                         </BarChart>
                     </ResponsiveContainer>
                 </div>

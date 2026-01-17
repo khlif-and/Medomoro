@@ -21,9 +21,9 @@ export const useTasks = () => {
         refreshTasks();
     }, []);
 
-    const add = async (title, content) => {
+    const add = async (title, content, date = "", time = "", color = "") => {
         try {
-            await AddTask(title, content);
+            await AddTask(title, content, date, time, color);
             await refreshTasks();
             return true;
         } catch (err) {

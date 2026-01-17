@@ -1,57 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { createPortal } from 'react-dom';
 import { X, Trash2, Plus, Clock, FileText, Calendar } from 'lucide-react';
 import { Heading } from '../atoms/Typography';
 import { ResourceItem } from '../molecules/ResourceItem';
 import { ResourceForm } from '../molecules/ResourceForm';
 
-export const ResourceSidebar = ({ folder, items, onAddItem, onUpdateItem, onDeleteItem, onDeleteFolder, onClose }) => {
-    const [isAdding, setIsAdding] = useState(false);
-    const [addType, setAddType] = useState('link');
-    const [title, setTitle] = useState("");
-    const [url, setUrl] = useState("");
-    const [description, setDescription] = useState("");
-    const [editingItemId, setEditingItemId] = useState(null);
+import { useResourceSidebar } from '../../logic/useResourceSidebar';
 
-    useEffect(() => {
-        document.body.style.overflow = 'hidden';
-        return () => {
-            document.body.style.overflow = 'unset';
-        };
-    }, []);
+export const ResourceSidebar = ({ folder, items, onAddItem, onUpdateItem, onDeleteItem, onDeleteFolder, onClose }) => {
+    const {
+        isAdding,
+        setIsAdding,
+        addType,
+        setAddType,
+        title,
+        setTitle,
+        url,
+        setUrl,
+        description,
+        setDescription,
+        editingItemId,
+        handleSubmit,
+        handleCancel,
+        startEditing,
+        handleBrowse
+    } = useResourceSidebar({ folder, onAddItem, onUpdateItem });
 
     const lastEditedStr = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
     if (!folder) return null;
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!title.trim()) return;
-
-        if (editingItemId) {
-            await onUpdateItem(editingItemId, title, url, description);
-        } else {
-            await onAddItem(folder.id, addType, title, url, description);
-        }
-        handleCancel();
-    };
-
-    const handleCancel = () => {
-        setIsAdding(false);
-        setEditingItemId(null);
-        setTitle("");
-        setUrl("");
-        setDescription("");
-    };
-
-    const startEditing = (item) => {
-        setEditingItemId(item.id);
-        setAddType(item.type);
-        setTitle(item.title);
-        setUrl(item.url);
-        setDescription(item.description);
-        setIsAdding(true);
-    };
 
     return createPortal(
         <div className="relative z-[9999]">
@@ -158,6 +135,7 @@ export const ResourceSidebar = ({ folder, items, onAddItem, onUpdateItem, onDele
                                     onSubmit={handleSubmit}
                                     onCancel={handleCancel}
                                     isEditing={!!editingItemId}
+                                    onBrowse={handleBrowse}
                                 />
                             )}
                         </div>

@@ -3,12 +3,14 @@
 import {model} from '../models';
 import {context} from '../models';
 
-export function AddTask(arg1:string,arg2:string):Promise<model.Task>;
+export function AddTask(arg1:string,arg2:string,arg3:string,arg4:string,arg5:string):Promise<model.Task>;
 
 export function DeleteTask(arg1:string):Promise<boolean>;
 
 export function GetTasks():Promise<Array<model.Task>>;
 
 export function Startup(arg1:context.Context):Promise<void>;
+
+export function ToggleHoliday(arg1:string):Promise<boolean>;
 
 export function UpdateTask(arg1:model.Task):Promise<boolean>;

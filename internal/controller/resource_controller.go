@@ -2,11 +2,13 @@ package controller
 
 import (
 	"context"
+	"os/exec"
 	"time"
 	"wails-app/internal/model"
 	"wails-app/internal/repository"
 
 	"github.com/google/uuid"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type ResourceController struct {
@@ -22,6 +24,29 @@ func NewResourceController() *ResourceController {
 
 func (c *ResourceController) Startup(ctx context.Context) {
 	c.ctx = ctx
+}
+
+func (c *ResourceController) SelectFile() (string, error) {
+	selection, err := runtime.OpenFileDialog(c.ctx, runtime.OpenDialogOptions{
+		Title: "Select PDF File",
+		Filters: []runtime.FileFilter{
+			{
+				DisplayName: "PDF Files",
+				Pattern:     "*.pdf",
+			},
+		},
+	})
+	if err != nil {
+		return "", err
+	}
+	return selection, nil
+}
+
+// OpenFile opens a file or URL with the system's default application
+func (c *ResourceController) OpenFile(path string) error {
+	// On Windows, use 'cmd /c start' to open the file
+	cmd := exec.Command("cmd", "/c", "start", "", path)
+	return cmd.Start()
 }
 
 func (c *ResourceController) GetData() (*repository.ResourceData, error) {

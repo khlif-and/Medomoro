@@ -9,8 +9,11 @@ export const useOnboardingStats = () => {
     }, []);
 
     const stats = useMemo(() => {
-        const total = tasks.length;
-        const completed = tasks.filter(t => t.isDone).length;
+        // Filter out Holidays as they are not "Tasks"
+        const validTasks = tasks.filter(t => !t.isHoliday);
+
+        const total = validTasks.length;
+        const completed = validTasks.filter(t => t.isDone).length;
         const pending = total - completed;
         const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
 

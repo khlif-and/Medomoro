@@ -1,21 +1,24 @@
 import React from 'react';
 import { FileText, Link as LinkIcon, Edit2, Trash2 } from 'lucide-react';
+import { OpenFile } from '../../../wailsjs/go/controller/ResourceController';
 
 export const ResourceItem = ({ item, onEdit, onDelete }) => {
+    const handleOpen = () => {
+        OpenFile(item.url).catch(err => console.error("Failed to open file:", err));
+    };
+
     return (
         <div className="group flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-200 hover:shadow-md transition-all relative">
             <div className={`mt-0.5 p-2 rounded-lg ${item.type === 'pdf' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'}`}>
                 {item.type === 'pdf' ? <FileText size={18} /> : <LinkIcon size={18} />}
             </div>
             <div className="flex-1 min-w-0">
-                <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block text-sm font-semibold text-gray-900 hover:text-blue-600 truncate mb-0.5"
+                <button
+                    onClick={handleOpen}
+                    className="block text-left text-sm font-semibold text-gray-900 hover:text-blue-600 truncate mb-0.5"
                 >
                     {item.title}
-                </a>
+                </button>
                 <div className="text-xs text-gray-500 truncate font-mono bg-gray-50 inline-block px-1.5 py-0.5 rounded">
                     {item.url}
                 </div>

@@ -1,67 +1,115 @@
 import React from 'react';
 import { Card } from '../atoms/Card';
 import { Heading, Text } from '../atoms/Typography';
+import { ChevronLeft, ChevronRight, Calendar as CalIcon } from 'lucide-react';
+import { useCalendarLogic } from '../../logic/useCalendarLogic';
+import { useNavigate } from 'react-router-dom';
 
 export const CalendarSection = () => {
+    const {
+        currentDate,
+        calendarDays,
+        nextMonth,
+        prevMonth,
+        getDateColorClass,
+        goToToday,
+        selectedDate
+    } = useCalendarLogic();
+
+    const navigate = useNavigate();
+
+    const weekDays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
+    // Formatting
+    const monthName = currentDate.toLocaleString('default', { month: 'long' });
+    const year = currentDate.getFullYear();
+
+    const handleDayClick = () => {
+        navigate('/calendar');
+    };
+
     return (
-        <Card className="w-full bg-[#FFFBF4] border border-[#FDF6E8] flex flex-col gap-6 py-8">
-            <div className="flex justify-between items-center px-4">
-                <Badge variant="outline" className="bg-white border-none py-1 px-3 text-xs font-medium text-gray-500">August</Badge>
-                <Heading level={3} className="text-lg font-medium text-gray-800">September 2024</Heading>
-                <Badge variant="white" className="bg-white py-1 px-3 text-xs font-medium text-gray-500 rounded-full shadow-sm">October</Badge>
+        <Card className="w-full bg-white flex flex-col p-6 h-full min-h-[320px]">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-6">
+                <div className="flex items-center gap-3">
+                    <div className="bg-orange-50 p-2 rounded-lg">
+                        <CalIcon size={20} className="text-orange-500" />
+                    </div>
+                    <div>
+                        <Heading level={3} className="text-lg font-bold text-gray-900">{monthName} {year}</Heading>
+                        <Text className="text-xs text-gray-400 font-medium">Schedule Overview</Text>
+                    </div>
+                </div>
+                <div className="flex gap-1">
+                    <button onClick={prevMonth} className="p-1.5 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition-colors">
+                        <ChevronLeft size={18} />
+                    </button>
+                    <button onClick={nextMonth} className="p-1.5 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition-colors">
+                        <ChevronRight size={18} />
+                    </button>
+                </div>
             </div>
 
-            <div className="flex justify-between items-start relative px-6">
-                {/* Timeline Line - Visual only (simplified) */}
-                <div className="absolute top-12 left-0 right-0 h-px bg-gray-200/50 border-t border-dashed border-gray-300 mx-8 z-0"></div>
-
-                {/* Day Items */}
-                {[
-                    { day: 'Mon', date: '22', time: '8:00 am' },
-                    { day: 'Tue', date: '23', time: '9:00 am' },
-                    { day: 'Wed', date: '24', active: true, event: { title: 'Weekly Team Sync', sub: 'Discuss progress on projects', avatars: [1, 2, 3] } },
-                    { day: 'Thu', date: '25', time: null },
-                    { day: 'Fri', date: '26', event: { title: 'Onboarding Session', sub: 'Introduction for new hires', avatars: [4, 5], light: true } },
-                    { day: 'Sat', date: '27', time: null },
-                ].map((item, idx) => (
-                    <div key={idx} className="flex flex-col items-center relative z-10 w-full">
-                        <Text className="text-xs text-gray-400 mb-1">{item.day}</Text>
-                        <Text className={`text-sm font-medium mb-8 ${item.active ? 'text-black' : 'text-gray-400'}`}>{item.date}</Text>
-
-                        {/* Event Card logic */}
-                        <div className="h-16 w-full flex justify-center">
-                            {item.event && !item.event.light && (
-                                <div className="bg-[#2D2D2D] text-white p-3 rounded-xl w-[180px] shadow-lg flex items-center justify-between absolute top-10">
-                                    <div>
-                                        <Text className="text-xs font-medium text-white">{item.event.title}</Text>
-                                        <Text className="text-[10px] text-gray-400">{item.event.sub}</Text>
-                                    </div>
-                                    <div className="flex -space-x-1">
-                                        {[1, 2, 3].map(i => <div key={i} className="w-5 h-5 rounded-full bg-gray-200 border border-black"></div>)}
-                                    </div>
-                                </div>
-                            )}
-                            {item.event && item.event.light && (
-                                <div className="bg-white text-gray-900 p-3 rounded-xl w-[180px] shadow-sm border border-gray-100 flex items-center justify-between absolute top-20">
-                                    <div>
-                                        <Text className="text-xs font-medium">{item.event.title}</Text>
-                                        <Text className="text-[10px] text-gray-500">{item.event.sub}</Text>
-                                    </div>
-                                    <div className="flex -space-x-1">
-                                        {[1, 2].map(i => <div key={i} className="w-5 h-5 rounded-full bg-gray-200 border border-white"></div>)}
-                                    </div>
-                                </div>
-                            )}
-
-                            {!item.event && item.time && (
-                                <Text className="text-[10px] text-gray-400 absolute top-10">{item.time}</Text>
-                            )}
+            {/* Calendar Grid */}
+            <div className="flex-1 flex flex-col">
+                {/* Week Headers */}
+                <div className="grid grid-cols-7 mb-2">
+                    {weekDays.map(day => (
+                        <div key={day} className="text-center text-[11px] font-bold text-gray-300 uppercase tracking-wider">
+                            {day}
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
+
+                {/* Days */}
+                <div className="grid grid-cols-7 gap-y-2 flex-1">
+                    {calendarDays.map((date, idx) => {
+                        if (!date) return <div key={idx} />;
+
+                        // Check logic
+                        const colorClass = getDateColorClass(date);
+                        // Simplified class for Dashboard Mini View:
+                        // We might want less aggressive colors than the full calendar
+                        // But let's use the logic for consistency, maybe tweak styles slightly
+
+                        const dayNum = date.getDate();
+                        const isToday = new Date().toDateString() === date.toDateString();
+
+                        // Extract base color style but customize for mini widget if needed
+                        // For now use standard classes but ensure they look good small
+
+                        return (
+                            <div key={idx} className="flex justify-center items-center">
+                                <button
+                                    onClick={handleDayClick}
+                                    className={`
+                                        w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all
+                                        ${colorClass}
+                                        ${!colorClass.includes('bg-') && 'hover:bg-gray-50 text-gray-600'}
+                                    `}
+                                >
+                                    {dayNum}
+                                </button>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* Footer / Legend or Action */}
+            <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center cursor-pointer" onClick={() => navigate('/calendar')}>
+                <div className="flex -space-x-2">
+                    {/* Dummy Avatars or Event Types */}
+                    <div className="w-6 h-6 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-[10px] text-blue-600 font-bold">W</div>
+                    <div className="w-6 h-6 rounded-full bg-indigo-100 border-2 border-white flex items-center justify-center text-[10px] text-indigo-600 font-bold">P</div>
+                    <div className="w-6 h-6 rounded-full bg-rose-100 border-2 border-white flex items-center justify-center text-[10px] text-rose-600 font-bold">+</div>
+                </div>
+                <div className="flex items-center gap-1 text-xs font-semibold text-gray-400 hover:text-gray-800 transition-colors">
+                    <span>Open Calendar</span>
+                    <ChevronRight size={14} />
+                </div>
             </div>
         </Card>
     );
 };
-
-const Badge = ({ variant, className, children }) => <span className={className}>{children}</span>; // Quick fix for missing import locally if needed, but I imported it

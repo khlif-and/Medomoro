@@ -10,7 +10,8 @@ export const ResourceForm = ({
     setUrl,
     onSubmit,
     onCancel,
-    isEditing
+    isEditing,
+    onBrowse
 }) => {
     return (
         <div className="bg-white border border-blue-200 shadow-lg rounded-xl p-4 animate-in fade-in slide-in-from-bottom-2 ring-4 ring-blue-50">
@@ -36,12 +37,19 @@ export const ResourceForm = ({
                     onChange={(e) => setTitle(e.target.value)}
                     autoFocus
                 />
-                <input
-                    className="w-full text-sm px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-mono"
-                    placeholder={addType === 'link' ? "https://..." : "/path/to/file.pdf"}
-                    value={url}
-                    onChange={(e) => setUrl(e.target.value)}
-                />
+                <div className="flex gap-2">
+                    <input
+                        className="flex-1 text-sm px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-mono"
+                        placeholder={addType === 'link' ? "https://..." : "/path/to/file.pdf"}
+                        value={url}
+                        onChange={(e) => setUrl(e.target.value)}
+                    />
+                    {addType === 'pdf' && (
+                        <Button type="button" onClick={onBrowse} variant="secondary" className="px-3">
+                            Browse
+                        </Button>
+                    )}
+                </div>
                 <div className="flex justify-end gap-2 pt-2">
                     <Button type="button" onClick={onCancel} size="sm" variant="ghost" className="text-xs text-gray-500 hover:text-gray-900">
                         Cancel

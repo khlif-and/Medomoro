@@ -22,6 +22,14 @@ export function GetData() {
   return window['go']['controller']['ResourceController']['GetData']();
 }
 
+export function OpenFile(arg1) {
+  return window['go']['controller']['ResourceController']['OpenFile'](arg1);
+}
+
+export function SelectFile() {
+  return window['go']['controller']['ResourceController']['SelectFile']();
+}
+
 export function Startup(arg1) {
   return window['go']['controller']['ResourceController']['Startup'](arg1);
 }

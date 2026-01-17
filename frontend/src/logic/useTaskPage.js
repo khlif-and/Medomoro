@@ -52,7 +52,7 @@ export const useTaskPage = () => {
         time,
         formatTime,
         formatDate,
-        tasks,
+        tasks: tasks.filter(t => !t.isHoliday),
         loading,
         title,
         setTitle,

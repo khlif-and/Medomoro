@@ -25,11 +25,11 @@ export const TopNav = () => {
                 <NavItem to="/dashboard" active={isActive('/dashboard')}>Dashboard</NavItem>
                 <NavItem to="/task" active={isActive('/task')}>Task</NavItem>
                 <NavItem to="/memo" active={isActive('/memo')}>Memo</NavItem>
-                <NavItem>Pomodoro</NavItem>
-                <NavItem>Journal</NavItem>
-                <NavItem>Calendar</NavItem>
-                <NavItem>MyMuslim</NavItem>
-                <NavItem>NoFaps</NavItem>
+                <NavItem to="/pomodoro" active={isActive('/pomodoro')}>Pomodoro</NavItem>
+                <NavItem to="/journal" active={isActive('/journal')}>Journal</NavItem>
+                <NavItem to="/calendar" active={isActive('/calendar')}>Calendar</NavItem>
+                <NavItem to="/mymuslim" active={isActive('/mymuslim')}>MyMuslim</NavItem>
+                <NavItem to="/nofaps" active={isActive('/nofaps')}>NoFaps</NavItem>
                 <Button variant="ghost" className="px-4 py-2 text-sm font-medium rounded-full bg-gray-100/50 hover:bg-gray-100 ml-2">
                     <Settings size={16} className="mr-2" /> Setting
                 </Button>

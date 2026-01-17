@@ -13,6 +13,10 @@ export function DeleteItem(arg1:string):Promise<repository.ResourceData>;
 
 export function GetData():Promise<repository.ResourceData>;
 
+export function OpenFile(arg1:string):Promise<void>;
+
+export function SelectFile():Promise<string>;
+
 export function Startup(arg1:context.Context):Promise<void>;
 
 export function UpdateFolder(arg1:string,arg2:string,arg3:string):Promise<repository.ResourceData>;

@@ -28,18 +28,22 @@ func (c *TaskController) GetTasks() ([]model.Task, error) {
 	return c.repo.Load()
 }
 
-func (c *TaskController) AddTask(title string, content string) (model.Task, error) {
+func (c *TaskController) AddTask(title, content, date, timeStr, color string) (model.Task, error) {
 	tasks, err := c.repo.Load()
 	if err != nil {
 		return model.Task{}, err
 	}
 
 	newTask := model.Task{
-		ID:        uuid.New().String(),
-		Title:     title,
-		Content:   content,
-		IsDone:    false,
-		CreatedAt: time.Now().Format("2006-01-02 15:04:05"),
+		ID:            uuid.New().String(),
+		Title:         title,
+		Content:       content,
+		IsDone:        false,
+		CreatedAt:     time.Now().Format("2006-01-02 15:04:05"),
+		ScheduledDate: date,
+		ScheduledTime: timeStr,
+		Color:         color,
+		IsHoliday:     false,
 	}
 
 	tasks = append([]model.Task{newTask}, tasks...) // Prepend
@@ -84,4 +88,37 @@ func (c *TaskController) DeleteTask(id string) (bool, error) {
 		}
 	}
 	return false, nil
+}
+
+// ToggleHoliday checks if a special Holiday task exists for the date.
+// If yes, removes it. If no, creates it.
+func (c *TaskController) ToggleHoliday(date string) (bool, error) {
+	tasks, err := c.repo.Load()
+	if err != nil {
+		return false, err
+	}
+
+	// Check if exists
+	for i, t := range tasks {
+		if t.ScheduledDate == date && t.IsHoliday {
+			// Remove it (Toggle Off)
+			tasks = append(tasks[:i], tasks[i+1:]...)
+			return c.repo.Save(tasks) == nil, c.repo.Save(tasks)
+		}
+	}
+
+	// Create it (Toggle On)
+	holidayTask := model.Task{
+		ID:            uuid.New().String(),
+		Title:         "Day Off",
+		Content:       "Holiday",
+		IsDone:        true, // Considered 'done' automatically? Or irrelevant.
+		CreatedAt:     time.Now().Format("2006-01-02 15:04:05"),
+		ScheduledDate: date,
+		IsHoliday:     true,
+		Color:         "#3b82f6", // Blue
+	}
+	tasks = append(tasks, holidayTask)
+	err = c.repo.Save(tasks)
+	return true, err
 }

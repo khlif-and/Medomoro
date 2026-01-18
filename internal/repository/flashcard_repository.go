@@ -12,9 +12,9 @@ type FlashcardRepository struct {
 	mutex    sync.RWMutex
 }
 
-func NewFlashcardRepository() *FlashcardRepository {
+func NewFlashcardRepository(filename string) *FlashcardRepository {
 	return &FlashcardRepository{
-		filename: "flashcards.json",
+		filename: filename,
 	}
 }
 

@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 
 	"wails-app/internal/controller"
 	"wails-app/internal/domain/repositories"
+	"wails-app/internal/repository"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -25,21 +27,27 @@ type App struct {
 }
 
 // NewApp creates a new App application struct
-func NewApp() *App {
-	// Initialize repositories
-	// Using "." as appDataDir for development to keep files in project root
-	journalRepo := repositories.NewJournalRepository(".")
-	pomodoroRepo := repositories.NewPomodoroRepository(".")
+func NewApp(appDataDir string) *App {
+	// Initialize repositories with AppDataDir
+	journalRepo := repositories.NewJournalRepository(appDataDir)
+	pomodoroRepo := repositories.NewPomodoroRepository(appDataDir)
+
+	taskRepo := repository.NewTaskRepository(filepath.Join(appDataDir, "tasks.json"))
+	memoRepo := repository.NewMemoRepository(filepath.Join(appDataDir, "memos.json"))
+	flashcardRepo := repository.NewFlashcardRepository(filepath.Join(appDataDir, "flashcards.json"))
+	resourceRepo := repository.NewResourceRepository(filepath.Join(appDataDir, "resources.json"))
+	muslimRepo := repository.NewMuslimRepository(filepath.Join(appDataDir, "ibadah.json"))
+	nofapRepo := repository.NewNoFapRepository(filepath.Join(appDataDir, "nofap.json"))
 
 	return &App{
-		taskController:      controller.NewTaskController(),
+		taskController:      controller.NewTaskController(taskRepo),
 		journalController:   controller.NewJournalController(journalRepo),
 		pomodoroController:  controller.NewPomodoroController(pomodoroRepo),
-		muslimController:    controller.NewMuslimController(),
-		flashcardController: controller.NewFlashcardController(),
-		noFapController:     controller.NewNoFapController(),
-		resourceController:  controller.NewResourceController(),
-		memoController:      controller.NewMemoController(),
+		muslimController:    controller.NewMuslimController(muslimRepo),
+		flashcardController: controller.NewFlashcardController(flashcardRepo),
+		noFapController:     controller.NewNoFapController(nofapRepo),
+		resourceController:  controller.NewResourceController(resourceRepo),
+		memoController:      controller.NewMemoController(memoRepo),
 		systemController:    controller.NewSystemController(),
 	}
 }

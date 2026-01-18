@@ -9,3 +9,11 @@ export function GetUserProfile() {
 export function Startup(arg1) {
   return window['go']['controller']['SystemController']['Startup'](arg1);
 }
+
+export function UpdateAvatar() {
+  return window['go']['controller']['SystemController']['UpdateAvatar']();
+}
+
+export function UpdateUserProfile(arg1, arg2, arg3) {
+  return window['go']['controller']['SystemController']['UpdateUserProfile'](arg1, arg2, arg3);
+}

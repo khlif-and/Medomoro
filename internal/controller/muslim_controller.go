@@ -12,9 +12,9 @@ type MuslimController struct {
 	repo *repository.MuslimRepository
 }
 
-func NewMuslimController() *MuslimController {
+func NewMuslimController(repo *repository.MuslimRepository) *MuslimController {
 	return &MuslimController{
-		repo: repository.NewMuslimRepository("ibadah.json"),
+		repo: repo,
 	}
 }
 

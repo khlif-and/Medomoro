@@ -36,8 +36,12 @@ export namespace controller {
 	}
 	export class UserProfile {
 	    username: string;
+	    osUsername: string;
+	    role: string;
+	    balance: string;
 	    avatar: string;
 	    avatarUrl: string;
+	    osAvatar: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new UserProfile(source);
@@ -46,8 +50,12 @@ export namespace controller {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.username = source["username"];
+	        this.osUsername = source["osUsername"];
+	        this.role = source["role"];
+	        this.balance = source["balance"];
 	        this.avatar = source["avatar"];
 	        this.avatarUrl = source["avatarUrl"];
+	        this.osAvatar = source["osAvatar"];
 	    }
 	}
 

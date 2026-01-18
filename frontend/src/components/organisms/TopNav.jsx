@@ -2,13 +2,15 @@ import React from 'react';
 import { NavItem } from '../molecules/NavItem';
 import { Button } from '../atoms/Button';
 import { useLocation } from 'react-router-dom';
-
 import { Bell, Settings, User } from 'lucide-react';
 import { Heading } from '../atoms/Typography';
+import { useSystemLogic } from '../../logic/useSystemLogic';
 
 export const TopNav = () => {
     const location = useLocation();
     const currentPath = location.pathname;
+    const { userProfile } = useSystemLogic();
+    const avatarSrc = userProfile?.osAvatar || userProfile?.avatar; // Prefer OS avatar, fallback to generic
 
     const isActive = (path) => {
         if (path === '/dashboard' && (currentPath === '/' || currentPath === '/dashboard')) return true;
@@ -21,7 +23,7 @@ export const TopNav = () => {
                 <Heading level={3} className="text-2xl font-bold tracking-tight">Crextio</Heading>
             </div>
 
-            <nav className="flex items-center gap-1 bg-white p-1.5 rounded-full shadow-sm">
+            <nav className="flex items-center gap-1 bg-gray-50/50 p-1.5 rounded-full shadow-sm">
                 <NavItem to="/dashboard" active={isActive('/dashboard')}>Dashboard</NavItem>
                 <NavItem to="/task" active={isActive('/task')}>Task</NavItem>
                 <NavItem to="/memo" active={isActive('/memo')}>Memo</NavItem>
@@ -35,13 +37,21 @@ export const TopNav = () => {
                 </Button>
             </nav>
 
-            <div className="flex items-center gap-3">
-                <Button variant="icon" className="bg-white shadow-sm w-10 h-10">
-                    <Bell size={20} />
+            <div className="flex items-center gap-4">
+                <Button variant="icon" className="bg-white shadow-sm w-10 h-10 rounded-full hover:bg-gray-50 relative">
+                    <Bell size={20} className="text-gray-600" />
+                    <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
                 </Button>
-                <Button variant="icon" className="bg-white shadow-sm w-10 h-10">
-                    <User size={20} />
-                </Button>
+
+                <div className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden border border-gray-200 shadow-sm cursor-pointer hover:ring-2 hover:ring-blue-100 transition-all">
+                    {avatarSrc ? (
+                        <img src={avatarSrc} alt="User" className="w-full h-full object-cover" />
+                    ) : (
+                        <div className="flex items-center justify-center w-full h-full text-gray-400">
+                            <User size={20} />
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

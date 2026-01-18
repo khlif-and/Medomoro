@@ -17,9 +17,9 @@ type ResourceRepository struct {
 	mutex    sync.RWMutex
 }
 
-func NewResourceRepository() *ResourceRepository {
+func NewResourceRepository(filename string) *ResourceRepository {
 	return &ResourceRepository{
-		filename: "resources.json",
+		filename: filename,
 	}
 }
 

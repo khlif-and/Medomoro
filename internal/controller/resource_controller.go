@@ -16,9 +16,9 @@ type ResourceController struct {
 	repo *repository.ResourceRepository
 }
 
-func NewResourceController() *ResourceController {
+func NewResourceController(repo *repository.ResourceRepository) *ResourceController {
 	return &ResourceController{
-		repo: repository.NewResourceRepository(),
+		repo: repo,
 	}
 }
 

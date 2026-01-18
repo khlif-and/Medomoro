@@ -12,9 +12,9 @@ type MemoRepository struct {
 	mutex    sync.RWMutex
 }
 
-func NewMemoRepository() *MemoRepository {
+func NewMemoRepository(filename string) *MemoRepository {
 	return &MemoRepository{
-		filename: "memos.json",
+		filename: filename,
 	}
 }
 

@@ -12,9 +12,9 @@ type NoFapController struct {
 	repo *repository.NoFapRepository
 }
 
-func NewNoFapController() *NoFapController {
+func NewNoFapController(repo *repository.NoFapRepository) *NoFapController {
 	return &NoFapController{
-		repo: repository.NewNoFapRepository("nofap.json"),
+		repo: repo,
 	}
 }
 

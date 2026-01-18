@@ -26,5 +26,24 @@ export const useSystemLogic = () => {
         loadProfile();
     }, []);
 
-    return { userProfile, sysLoading };
+    const updateProfile = async (username, role, balance) => {
+        try {
+            const updated = await window.go.controller.SystemController.UpdateUserProfile(username, role, balance);
+            if (updated) setUserProfile(updated);
+        } catch (e) {
+            console.error("Failed to update profile", e);
+        }
+    };
+
+    const updateAvatar = async () => {
+        try {
+            const updated = await window.go.controller.SystemController.UpdateAvatar();
+            if (updated) setUserProfile(updated);
+        } catch (e) {
+            console.error("Failed to update avatar", e);
+        }
+    };
+
+
+    return { userProfile, sysLoading, updateProfile, updateAvatar };
 };

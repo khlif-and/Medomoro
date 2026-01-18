@@ -14,9 +14,9 @@ type FlashcardController struct {
 	repo *repository.FlashcardRepository
 }
 
-func NewFlashcardController() *FlashcardController {
+func NewFlashcardController(repo *repository.FlashcardRepository) *FlashcardController {
 	return &FlashcardController{
-		repo: repository.NewFlashcardRepository(),
+		repo: repo,
 	}
 }
 

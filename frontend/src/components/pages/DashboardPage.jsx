@@ -13,11 +13,11 @@ import { useSystemLogic } from '../../logic/useSystemLogic';
 
 export const DashboardPage = () => {
     const { userProfile, sysLoading } = useSystemLogic();
-    const displayName = sysLoading ? "User" : (userProfile.username || "User");
+    const displayName = sysLoading ? "User" : (userProfile.osUsername || userProfile.username || "User");
 
     return (
         <div className="flex flex-col gap-6">
-            <h1 className="text-4xl font-normal text-gray-900 tracking-tight mb-2">Welcome in, {displayName}</h1>
+            <h1 className="text-4xl font-normal text-gray-900 tracking-tight mb-2">Welcome back, {displayName}</h1>
 
             <MainLayout
                 profileSection={<ProfileCard user={userProfile} />}

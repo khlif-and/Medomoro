@@ -14,9 +14,9 @@ type MemoController struct {
 	repo *repository.MemoRepository
 }
 
-func NewMemoController() *MemoController {
+func NewMemoController(repo *repository.MemoRepository) *MemoController {
 	return &MemoController{
-		repo: repository.NewMemoRepository(),
+		repo: repo,
 	}
 }
 

@@ -6,3 +6,7 @@ import {context} from '../models';
 export function GetUserProfile():Promise<controller.UserProfile>;
 
 export function Startup(arg1:context.Context):Promise<void>;
+
+export function UpdateAvatar():Promise<controller.UserProfile>;
+
+export function UpdateUserProfile(arg1:string,arg2:string,arg3:string):Promise<controller.UserProfile>;

@@ -14,9 +14,9 @@ type TaskController struct {
 	repo *repository.TaskRepository
 }
 
-func NewTaskController() *TaskController {
+func NewTaskController(repo *repository.TaskRepository) *TaskController {
 	return &TaskController{
-		repo: repository.NewTaskRepository("tasks.json"),
+		repo: repo,
 	}
 }
 
